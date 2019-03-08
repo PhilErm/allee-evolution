@@ -12,5 +12,5 @@ source("scripts/functions.R")
 simResults <- sim(N, nGens, nSims)
 
 # Saving results
-save(simResults, file="data/pushedToPulled.RData")
+save(simResults, file="data/simResults.RData")
 beep()
