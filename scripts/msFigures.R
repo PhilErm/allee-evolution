@@ -700,3 +700,73 @@ p3 <- ggplot(data = sing.densTime) +
   labs(x = "Patch", y = "Density", colour = "Mean A trait value")
 p3 <- ggplotly(p3)
 p3
+
+# The degree of mixing in a pushed wave for 5000 generations ####
+
+# Data manipulation functions
+# Calcultes Simpson's diversity index from a population matrix
+simpson <- function(pop){
+  clones <- count(pop, NM)
+  v <- NULL
+  for(i in 1:nrow(clones)){
+    v[i] <- (clones[i,"nn"])*((clones[i,"nn"])-1)
+  }
+  v <- unlist(v)
+  numerator <- sum(v)
+  denominator <- sum(clones[,"nn"])*(sum(clones[,"nn"])-1)
+  simpsons.D <- 1 - (numerator/denominator)
+  simpsons.D
+}
+
+# Calculates Simpson's diversity index for each generation of each invasion
+simpFinder <- function(data){
+  vanSub <- lapply(data, function(x) lapply(x, function(x) subset(x, x[,"patch"] > max(x[,"patch"])-5)))
+  vanSub.df <- lapply(vanSub, function(x) lapply(x, function(x) as.data.frame(x)))
+  vanSimp <- lapply(vanSub.df, function(x) lapply(x, function(x) simpson(x)))
+  df <- data.frame(invasion = rep(1:nSims, each = nGens), generation = rep(1:nGens, times = nSims))
+  flat <- unlist(vanSimp)
+  vanSimp.df <- cbind(df, flat)
+  vanSimp.df
+}
+
+# Loading data
+load(file="data/mixingPushed5000Gens.RData")
+pushed5000 <- simResults
+
+# Manipulating data
+simpP5000 <- simpFinder(pushed5000)
+
+# Plots
+# Simpson's diversity index in the vanguard over time
+
+p1 <- ggplot(simpP5000, aes(x = generation, y = flat)) +
+  stat_summary(fun.y = mean, geom = "line") +
+  labs(tag = "A", x = "Generation", y = expression(""~bar(italic(D))[italic(van)]~"")) +
+  theme_classic(base_size = 12) +
+  geom_hline(yintercept = 0, linetype="dotted") +
+  geom_hline(yintercept = 0.8, linetype="dotted") +
+  scale_y_continuous(breaks=c(0.8,0.6,0.4,0.2,0)) +
+  theme(legend.text=element_text(size=12), legend.title=element_blank(), plot.tag = element_text(size=24)) +
+  theme(legend.text.align = 0)
+p1
+
+# A single example of the final mixing state of a pushed wave
+
+p2 <- ggplot(as.data.frame(pushed5000[[1]][[nGens]]), aes(x=patch, fill = as.factor(NM))) +
+  geom_bar(position = "stack") +
+  labs(tag = "B", x = "Patch", y = "Density") +
+  scale_fill_discrete(name = "Neutral trait carried", labels = c("Trait 0 ","Trait 1 ","Trait 2 ","Trait 3 ","Trait 4 ")) +
+  theme_classic(base_size = 12) +
+  theme(legend.text=element_text(size=12), plot.tag = element_text(size=24),legend.position="bottom")
+p2
+
+a1 <- arrangeGrob(p1)
+
+a2 <- arrangeGrob(p2)
+
+lay <- rbind(c(1,1),
+             c(2,2))
+
+f1 <- grid.arrange(a1, a2, layout_matrix = lay, heights=c(10,10,1))
+f1
+ggsave(filename = "figures/figMixPushed5000.pdf", f1, width = 20, height = 20, units = "cm")
