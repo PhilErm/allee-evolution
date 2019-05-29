@@ -443,7 +443,7 @@ s3 <- speedPlot(mut.Speed)
 #s3 <- s3 + geom_dl(aes(label=scenario),method=list(box.color = NA, "angled.boxes"))
 s3 <- s3 + theme(legend.title=element_blank())
 s3 <- s3 + scale_color_hue(labels = c(expression(""~italic(p)[italic(mut)]~"= 0"), expression(""~italic(p)[italic(mut)]~"= 0.001"), expression(""~italic(p)[italic(mut)]~"= 0.01"), expression(""~italic(p)[italic(mut)]~"= 0.1")))
-s3 <- s3 + theme(legend.text.align = 0)
+s3 <- s3 + theme(legend.text.align = 0) + theme(axis.title.x=element_blank())
 s3
 
 # Response to A
@@ -479,6 +479,35 @@ s4 <- s4 + scale_color_hue(labels = c(expression(""~bar(italic(A))[italic(init)]
 s4 <- s4 + theme(legend.text.align = 0) + theme(axis.title.y=element_blank())
 s4
 
+# Response to m
+
+# Loading data
+load(file="data/defConM0_25.RData")
+m0_25 <- simResults
+load(file="data/defConM0_5.RData")
+m0_5 <- simResults
+load(file="data/defConM0_75.RData")
+m0_75 <- simResults
+
+# Manipulating data
+m.ADiff <- rbind(ADiffByScen(m0_25),ADiffByScen(m0_5),ADiffByScen(m0_75))
+m.Speed <- rbind(speedByScen(m0_25),speedByScen(m0_5),speedByScen(m0_75))
+
+# Manipulating figures
+p5 <- ADiffPlot(m.ADiff)
+p5 <- p5 + scale_x_discrete(labels=c("0.25","0.5","0.75"))
+p5 <- p5 + labs(x = TeX("$\\textit{m}$"), y = expression(""~bar(italic(A))[italic(fin)]~""))
+p5 <- p5 + scale_fill_discrete(labels = c("Core", "Vanguard"))
+p5 <- p5 + theme(legend.title=element_blank()) + theme(legend.position="none")
+p5
+
+s5 <- speedPlot(m.Speed)
+#s5 <- s5 + geom_dl(aes(label=scenario),method=list(box.color = NA, "angled.boxes"))
+s5 <- s5 + theme(legend.title=element_blank())
+s5 <- s5 + scale_color_hue(labels = c(substitute(paste(italic('m'), " = 0.25")), substitute(paste(italic('m'), " = 0.5")), substitute(paste(italic('m'), " = 0.75"))))
+s5 <- s5 + theme(legend.text.align = 0)
+s5
+
 # Labelling each plot
 
 p1 <- arrangeGrob(p1, top = textGrob("A", x = unit(0, "npc")
@@ -494,6 +523,10 @@ p3 <- arrangeGrob(p3, top = textGrob("C", x = unit(0, "npc")
                                      gp=gpar(col="black", fontsize=24)))
 
 p4 <- arrangeGrob(p4, top = textGrob("D", x = unit(0, "npc")
+                                     , y   = unit(1, "npc"), just=c("left","top"),
+                                     gp=gpar(col="black", fontsize=24)))
+
+p5 <- arrangeGrob(p5, top = textGrob("E", x = unit(0, "npc")
                                      , y   = unit(1, "npc"), just=c("left","top"),
                                      gp=gpar(col="black", fontsize=24)))
 
@@ -513,6 +546,10 @@ s4 <- arrangeGrob(s4, top = textGrob("D", x = unit(0, "npc")
                                      , y   = unit(1, "npc"), just=c("left","top"),
                                      gp=gpar(col="black", fontsize=24)))
 
+s5 <- arrangeGrob(s5, top = textGrob("E", x = unit(0, "npc")
+                                     , y   = unit(1, "npc"), just=c("left","top"),
+                                     gp=gpar(col="black", fontsize=24)))
+
 # Combining all A-difference scenarios with seperate legend
 # If moving to an even number of graphs, consider using grid_arrange_shared_legend code for printing one legend at bottom
 pLegend <- ADiffPlot(r.ADiff)
@@ -525,15 +562,15 @@ pLegend <- g_legend(pLegend)
 
 lay <- rbind(c(1,2),
              c(3,4),
-             c(5,5))
+             c(5,6))
 
-f1 <- grid.arrange(p1, p2, p3, p4, pLegend, layout_matrix = lay, heights=c(10,10,1))
+f1 <- grid.arrange(p1, p2, p3, p4, p5, pLegend, layout_matrix = lay, heights=c(10,10,10))
 f1
 ggsave(filename = "figures/figInvSensSpeedADiff.pdf", f1, width = 20, height = 20, units = "cm")
 
 
 # Combining all speed scenarios with seperate legend
-g1 <- grid.arrange(s1, s2, s3, s4, ncol = 2, nrow = 2)
+g1 <- grid.arrange(s1, s2, s3, s4, s5, ncol = 2, nrow = 3)
 g1
 ggsave(filename = "figures/figInvSensSpeed.pdf", g1, width = 20, height = 20, units = "cm")
 
