@@ -98,12 +98,12 @@ colnames(densADiffmean) <- c("patch", "density", "A") # Renames columns
 p1 <- ggplot(densADiffmean, aes(patch, density, fill = A, colour = A)) + 
   geom_col() +
   theme_classic(base_size = 12) +
-  scale_fill_gradient(low="red3", high="royalblue2") +
-  scale_colour_gradient(low="red3", high="royalblue2") +
+  scale_fill_gradient(low="red3", high="royalblue2", breaks=c(0,-50,-100,-150,-200,-250), limits = c(-250, 0)) +
+  scale_colour_gradient(low="red3", high="royalblue2", breaks=c(0,-50,-100,-150,-200,-250), limits = c(-250, 0)) +
   labs(x = "Patch", y = "Mean density") +
-  guides(fill=guide_legend(title=expression("Mean "~bar(italic(A))[italic(x)]~""), reverse=T),colour=guide_legend(title=expression("Mean "~bar(italic(A))[italic(x)]~""),reverse=T))
+  guides(fill=guide_legend(title=expression("Mean "~bar(italic(A))[italic(x)]~"")),colour=guide_legend(title=expression("Mean "~bar(italic(A))[italic(x)]~"")))
 p1
-ggsave(filename = "figures/figDefConFinal.pdf", p1, width = 20, height = 10, units = "cm")
+#ggsave(filename = "figures/figDefConFinal.pdf", p1, width = 20, height = 10, units = "cm")
 
 # The evolution of A in the vanguard over time ####
 
@@ -370,6 +370,7 @@ r0_3 <- simResults
 # Manipulating data
 r.ADiff <- rbind(ADiffByScen(r0_1),ADiffByScen(r0_2),ADiffByScen(r0_3))
 r.Speed <- rbind(speedByScen(r0_1),speedByScen(r0_2),speedByScen(r0_3))
+rm(r0_1, r0_2, r0_3)
 
 # Manipulating figures
 p1 <- ADiffPlot(r.ADiff)
@@ -399,6 +400,7 @@ K750 <- simResults
 # Manipulating data
 K.ADiff <- rbind(ADiffByScen(K250),ADiffByScen(K500),ADiffByScen(K750))
 K.Speed <- rbind(speedByScen(K250),speedByScen(K500),speedByScen(K750))
+rm(K250, K500, K750)
 
 # Manipulating figures
 p2 <- ADiffPlot(K.ADiff)
@@ -430,6 +432,7 @@ mut0_1 <- simResults
 # Manipulating data
 mut.ADiff <- rbind(ADiffByScen(mut0),ADiffByScen(mut0_001),ADiffByScen(mut0_01),ADiffByScen(mut0_1))
 mut.Speed <- rbind(speedByScen(mut0),speedByScen(mut0_001),speedByScen(mut0_01), speedByScen(mut0_1))
+rm(mut0, mut0_001, mut0_01, mut0_1)
 
 # Manipulating figures
 p3 <- ADiffPlot(mut.ADiff)
@@ -463,6 +466,7 @@ A50 <- simResults
 # Manipulating data
 A.ADiff <- rbind(ADiffByScen(ANeg50),ADiffByScen(ANeg25),ADiffByScen(A0),ADiffByScen(A25),ADiffByScen(A50))
 A.Speed <- rbind(speedByScen(ANeg50),speedByScen(ANeg25),speedByScen(A0),speedByScen(A25),speedByScen(A50))
+rm(ANeg50, ANeg25, A0, A25, A50)
 
 # Manipulating figures
 p4 <- ADiffPlot(A.ADiff)
@@ -476,7 +480,7 @@ s4 <- speedPlot(A.Speed)
 #s4 <- s4 + geom_dl(aes(label=scenario),method=list(box.color = NA, "angled.boxes"))
 s4 <- s4 + theme(legend.title=element_blank())
 s4 <- s4 + scale_color_hue(labels = c(expression(""~bar(italic(A))[italic(init)]~"= -50"), expression(""~bar(italic(A))[italic(init)]~"= -25"), expression(""~bar(italic(A))[italic(init)]~"= 0"), expression(""~bar(italic(A))[italic(init)]~"= 25"), expression(""~bar(italic(A))[italic(init)]~"= 50")))
-s4 <- s4 + theme(legend.text.align = 0) + theme(axis.title.y=element_blank())
+s4 <- s4 + theme(legend.text.align = 0) + theme(axis.title.y=element_blank()) + theme(axis.title.x=element_blank())
 s4
 
 # Response to m
@@ -492,6 +496,7 @@ m0_75 <- simResults
 # Manipulating data
 m.ADiff <- rbind(ADiffByScen(m0_25),ADiffByScen(m0_5),ADiffByScen(m0_75))
 m.Speed <- rbind(speedByScen(m0_25),speedByScen(m0_5),speedByScen(m0_75))
+rm(m0_25, m0_5, m0_75)
 
 # Manipulating figures
 p5 <- ADiffPlot(m.ADiff)
@@ -507,6 +512,36 @@ s5 <- s5 + theme(legend.title=element_blank())
 s5 <- s5 + scale_color_hue(labels = c(substitute(paste(italic('m'), " = 0.25")), substitute(paste(italic('m'), " = 0.5")), substitute(paste(italic('m'), " = 0.75"))))
 s5 <- s5 + theme(legend.text.align = 0)
 s5
+
+# Response to dist
+
+# Loading data
+load(file="data/defConDist1.RData")
+Dist1 <- simResults
+load(file="data/defConDist2.RData")
+Dist2 <- simResults
+load(file="data/defConDist3.RData")
+Dist3 <- simResults
+
+# Manipulating data
+m.ADiff <- rbind(ADiffByScen(Dist1),ADiffByScen(Dist2),ADiffByScen(Dist3))
+m.Speed <- rbind(speedByScen(Dist1),speedByScen(Dist2),speedByScen(Dist3))
+rm(Dist1, Dist2, Dist3)
+
+# Manipulating figures
+p6 <- ADiffPlot(m.ADiff)
+p6 <- p6 + scale_x_discrete(labels=c("1","2","3"))
+p6 <- p6 + labs(x = TeX("$\\textit{dist}$"), y = expression(""~bar(italic(A))[italic(fin)]~""))
+p6 <- p6 + scale_fill_discrete(labels = c("Core", "Vanguard"))
+p6 <- p6 + theme(legend.title=element_blank()) + theme(legend.position="none") + theme(axis.title.y=element_blank())
+p6
+
+s6 <- speedPlot(m.Speed)
+#s6 <- s6 + geom_dl(aes(label=scenario),method=list(box.color = NA, "angled.boxes"))
+s6 <- s6 + theme(legend.title=element_blank())
+s6 <- s6 + scale_color_hue(labels = c(substitute(paste(italic('dist'), " = 1")), substitute(paste(italic('dist'), " = 2")), substitute(paste(italic('dist'), " = 3"))))
+s6 <- s6 + theme(legend.text.align = 0) + theme(axis.title.y=element_blank())
+s6
 
 # Labelling each plot
 
@@ -530,6 +565,10 @@ p5 <- arrangeGrob(p5, top = textGrob("E", x = unit(0, "npc")
                                      , y   = unit(1, "npc"), just=c("left","top"),
                                      gp=gpar(col="black", fontsize=24)))
 
+p6 <- arrangeGrob(p6, top = textGrob("F", x = unit(0, "npc")
+                                     , y   = unit(1, "npc"), just=c("left","top"),
+                                     gp=gpar(col="black", fontsize=24)))
+
 s1 <- arrangeGrob(s1, top = textGrob("A", x = unit(0, "npc")
                                      , y   = unit(1, "npc"), just=c("left","top"),
                                      gp=gpar(col="black", fontsize=24)))
@@ -550,6 +589,10 @@ s5 <- arrangeGrob(s5, top = textGrob("E", x = unit(0, "npc")
                                      , y   = unit(1, "npc"), just=c("left","top"),
                                      gp=gpar(col="black", fontsize=24)))
 
+s6 <- arrangeGrob(s6, top = textGrob("F", x = unit(0, "npc")
+                                     , y   = unit(1, "npc"), just=c("left","top"),
+                                     gp=gpar(col="black", fontsize=24)))
+
 # Combining all A-difference scenarios with seperate legend
 # If moving to an even number of graphs, consider using grid_arrange_shared_legend code for printing one legend at bottom
 pLegend <- ADiffPlot(r.ADiff)
@@ -562,15 +605,16 @@ pLegend <- g_legend(pLegend)
 
 lay <- rbind(c(1,2),
              c(3,4),
-             c(5,6))
+             c(5,6),
+             c(7,7))
 
-f1 <- grid.arrange(p1, p2, p3, p4, p5, pLegend, layout_matrix = lay, heights=c(10,10,10))
+f1 <- grid.arrange(p1, p2, p3, p4, p5, p6, pLegend, layout_matrix = lay, heights=c(10,10,10,2))
 f1
 ggsave(filename = "figures/figInvSensSpeedADiff.pdf", f1, width = 20, height = 20, units = "cm")
 
 
 # Combining all speed scenarios with seperate legend
-g1 <- grid.arrange(s1, s2, s3, s4, s5, ncol = 2, nrow = 3)
+g1 <- grid.arrange(s1, s2, s3, s4, s5, s6, ncol = 2, nrow = 3)
 g1
 ggsave(filename = "figures/figInvSensSpeed.pdf", g1, width = 20, height = 20, units = "cm")
 
@@ -582,11 +626,11 @@ simpson <- function(pop){
   clones <- count(pop, NM)
   v <- NULL
   for(i in 1:nrow(clones)){
-    v[i] <- (clones[i,"nn"])*((clones[i,"nn"])-1)
+    v[i] <- (clones[i,"n"])*((clones[i,"n"])-1)
   }
   v <- unlist(v)
   numerator <- sum(v)
-  denominator <- sum(clones[,"nn"])*(sum(clones[,"nn"])-1)
+  denominator <- sum(clones[,"n"])*(sum(clones[,"n"])-1)
   simpsons.D <- 1 - (numerator/denominator)
   simpsons.D
 }
@@ -614,7 +658,7 @@ mixPulled <- simResults
 simpPP <- simpFinder(pp)
 simpPushed <- simpFinder(mixPushed)
 simpPulled <- simpFinder(mixPulled)
-simpMerged <- rbindlist(list(simpPushed, simpPulled), idcol = "ID")
+simpMerged <- rbindlist(list(simpPushed, simpPP, simpPulled), idcol = "ID")
 
 # Plots
 # Simpson's diversity index in the vanguard over time in invasions subject to evolution
@@ -629,7 +673,6 @@ p1
 ggsave(filename = "figures/figMixPP.pdf", p1, width = 20, height = 20, units = "cm")
 
 # Simpson's diversity index in the vanguard over time
-
 p1 <- ggplot(simpMerged, aes(x = generation, y = flat, colour = ID)) +
   stat_summary(fun.y = mean, geom = "line", aes(colour = paste("mean", ID))) +
   labs(tag = "A", x = "Generation", y = expression(""~bar(italic(D))[italic(van)]~"")) +
@@ -637,13 +680,13 @@ p1 <- ggplot(simpMerged, aes(x = generation, y = flat, colour = ID)) +
   geom_hline(yintercept = 0, linetype="dotted") +
   geom_hline(yintercept = 0.8, linetype="dotted") +
   scale_y_continuous(breaks=c(0.8,0.6,0.4,0.2,0)) +
-  scale_colour_manual(name = " ", labels = c(expression(~bar(italic(A))[italic(init)]~"= 250"),expression(~bar(italic(A))[italic(init)]~"= -497")), values = c("#619CFF", "#F8766D")) +
+  scale_colour_manual(name = " ", labels = c(expression(~bar(italic(A))[italic(init)]~"= 250"),expression(~bar(italic(A))[italic(init)]~"= 250, "~italic(A)[italic(i)]~"evolution possible"),expression(~bar(italic(A))[italic(init)]~"= -497")), values = c("#619CFF", "black", "#F8766D")) +
   theme(legend.text=element_text(size=12), legend.title=element_blank(), plot.tag = element_text(size=24)) +
-  theme(legend.text.align = 0)
+  theme(legend.text.align = 0) +
+  theme(legend.position = c(0.7, 0.5))
 p1
 
 # A single example of the final mixing state of a pushed wave
-
 p2 <- ggplot(as.data.frame(mixPushed[[10]][[nGens]]), aes(x=patch, fill = as.factor(NM))) +
   geom_bar(position = "stack") +
   labs(tag = "B", x = "Patch", y = "Density") +
@@ -654,7 +697,6 @@ p2 <- ggplot(as.data.frame(mixPushed[[10]][[nGens]]), aes(x=patch, fill = as.fac
 p2
 
 # A single example of the final mixing state of a pulled wave
-
 p3 <- ggplot(as.data.frame(mixPulled[[10]][[nGens]]), aes(x = patch, fill = as.factor(NM))) +
   geom_bar(position = "stack") +
   labs(tag = "C", x = "Patch", y = " ") +
@@ -807,3 +849,101 @@ lay <- rbind(c(1,1),
 f1 <- grid.arrange(a1, a2, layout_matrix = lay, heights=c(10,10,1))
 f1
 ggsave(filename = "figures/figMixPushed5000.pdf", f1, width = 20, height = 20, units = "cm")
+
+# The region of highest population growth in an evolving wave ####
+
+# Data manipulation functions
+# Preparing data concerning the gen state of all invasions
+invState <- function(data, gen){
+  genFinal <- sapply(data, '[', gen) # Creates a list consisting of the final generation of each invasion
+  genFinal
+}
+
+# Change in A trait over invasion space for all invasions
+ADiffFinal <- function(data){
+  alleeResFinal <- lapply(data, function(x) aggregate(x[,"A"]~x[,"patch"], FUN = mean)) # Calculates mean A per patch for each invasion
+  alleeResFinal <- rbindlist(alleeResFinal, idcol = TRUE) # Begins conversion of data to data frame
+  alleeResFinal <- as.data.frame(alleeResFinal) # Finishes conversion of data to data frame 
+  colnames(alleeResFinal) <- c("invasion", "patch", "A") # Renames columns
+  alleeResFinal
+}
+
+# Change in density over invasion space for all invasions
+densFinal <- function(data){
+  densityFinal <- lapply(data, function(x) table(x[,"patch"])) # Calculates density per patch for each invasion
+  densityFinal <- lapply(densityFinal, function(x) as.data.frame(x)) # Begins conversion of data to data frame
+  densityFinal <- rbindlist(densityFinal, idcol = TRUE) # Continues conversion of data to data frame
+  densityFinal <- as.data.frame(densityFinal) # Finishes conversion of data to data frame
+  colnames(densityFinal) <- c("invasion", "patch", "density") # Renames columns
+  densityFinal <- transform(densityFinal, patch = as.numeric(patch)) # Transforms patch from a factor into a numeric
+  densityFinal
+}
+
+# Loading data
+load(file="data/pushedToPulledWithMixing.RData")
+pp <- simResults
+
+# Manipulating data
+# Generating early, pushed wave snapshot
+earlyInv <- invState(pp,20)
+earlyInv.ADiff <- ADiffFinal(earlyInv)
+earlyInv.dens <- densFinal(earlyInv)
+earlyInv.densADiff <- merge(earlyInv.dens, earlyInv.ADiff)
+earlyInv.densADiffmean<-aggregate(earlyInv.densADiff[,3:4], by=list(earlyInv.densADiff$patch), FUN=mean)
+earlyInv.densADiffmean$growth <- alleeFunc(u=earlyInv.densADiffmean$density, t=earlyInv.densADiffmean$A, K=K, r=r)
+colnames(earlyInv.densADiffmean) <- c("patch", "density", "A", "growth") # Renames columns
+
+# Generating late, pulled wave snapshot
+lateInv <- invState(pp,220)
+lateInv.ADiff <- ADiffFinal(lateInv)
+lateInv.dens <- densFinal(lateInv)
+lateInv.densADiff <- merge(lateInv.dens, lateInv.ADiff)
+lateInv.densADiffmean<-aggregate(lateInv.densADiff[,3:4], by=list(lateInv.densADiff$patch), FUN=mean)
+lateInv.densADiffmean$growth <- alleeFunc(u=lateInv.densADiffmean$density, t=lateInv.densADiffmean$A, K=K, r=r)
+colnames(lateInv.densADiffmean) <- c("patch", "density", "A", "growth") # Renames columns
+
+# Plots
+
+# Pushed wave population growth
+legendTitle <- guide_legend(title=TeX("Mean expected reproductive output ($\\textit{E}(\\textit{W_{ix}})$)"))
+p1 <- ggplot(earlyInv.densADiffmean, aes(patch, density, fill = growth, colour = growth)) + 
+  geom_col() +
+  theme_classic(base_size = 12) +
+  scale_fill_gradient(breaks=c(0.90,1.00,1.10,1.20,1.30), limits = c(0.9,1.3)) +
+  scale_colour_gradient(breaks=c(0.90,1.00,1.10,1.20,1.30), limits = c(0.9,1.3)) +
+  #scale_fill_gradient(low="red3", high="royalblue2", breaks=c(0,-50,-100,-150,-200,-250), limits = c(-250, 0)) +
+  #scale_colour_gradient(low="red3", high="royalblue2", breaks=c(0,-50,-100,-150,-200,-250), limits = c(-250, 0)) +
+  labs(x = " ", y = "Mean density", tag = "A") +
+  guides(fill = legendTitle, colour = legendTitle) +
+  theme(legend.position = c(0.6, 0.6)) +
+  theme(plot.tag = element_text(size=24)) + 
+  expand_limits(x = 95)
+p1
+
+# Pulled wave population growth
+p2 <- ggplot(lateInv.densADiffmean, aes(patch, density, fill = growth, colour = growth)) + 
+  geom_col() +
+  theme_classic(base_size = 12) +
+  scale_fill_gradient(breaks=c(0.90,1.00,1.10,1.20,1.30), limits = c(0.9,1.3)) +
+  scale_colour_gradient(breaks=c(0.90,1.00,1.10,1.20,1.30), limits = c(0.9,1.3)) +
+  #scale_fill_gradient(low="red3", high="royalblue2", breaks=c(0,-50,-100,-150,-200,-250), limits = c(-250, 0)) +
+  #scale_colour_gradient(low="red3", high="royalblue2", breaks=c(0,-50,-100,-150,-200,-250), limits = c(-250, 0)) +
+  labs(x = "Patch", y = "Mean density", tag = "B") +
+  guides(fill = FALSE, colour = FALSE) +
+  theme(legend.text=element_text(size=12), plot.tag = element_text(size=24)) + 
+  expand_limits(x = 95)
+p2
+
+# Multiplot
+
+a1 <- arrangeGrob(p1)
+
+a2 <- arrangeGrob(p2)
+
+lay <- rbind(c(1),
+             c(2))
+
+f1 <- grid.arrange(a1, a2, layout_matrix = lay, heights=c(10,10))
+f1
+ggsave(filename = "figures/figPPGrowth.pdf", f1, width = 20, height = 20, units = "cm")
+
