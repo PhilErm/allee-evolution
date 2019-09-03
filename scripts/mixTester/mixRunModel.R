@@ -36,14 +36,14 @@ ggplot(finalGen,aes(x=patch, fill = as.factor(NM))) +
 # Data manipulation
 # Function for calculating Simpson's Diversity Index from a population matrix
 simpson <- function(pop){
-  clones <- count(pop, NM)
+  clones <- count(finalGen, NM)
   v <- NULL
   for(i in 1:nrow(clones)){
-    v[i] <- (clones[i,"nn"])*((clones[i,"nn"])-1)
+    v[i] <- (clones[i,"n"])*((clones[i,"n"])-1)
   }
   v <- unlist(v)
   numerator <- sum(v)
-  denominator <- sum(clones[,"nn"])*(sum(clones[,"nn"])-1)
+  denominator <- sum(clones[,"n"])*(sum(clones[,"n"])-1)
   simpsons.D <- 1 - (numerator/denominator)
   simpsons.D
 }
@@ -73,7 +73,6 @@ simpFinder <- function(data){
 simpInvasions <- simpFinder(simResults)
 
 # Plot
-
 ggplot(simpInvasions, aes(x=generation, y=flat)) +
   stat_summary(fun.y=mean, geom="line")
 
@@ -98,6 +97,5 @@ spesFinder <- function(data){
 spesInvasions <- spesFinder(simResults)
 
 # Plot
-
 ggplot(spesInvasions, aes(x=generation, y=flat)) +
   stat_summary(fun.y=mean, geom="line")

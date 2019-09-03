@@ -16,10 +16,10 @@ initPop <- function(N){
   pop # The initial population
 }
 
-# Nearest-neighbour dispersal
-ranWalk <- function(patch, m){
-  newPatch <- patch+sample(x = c(-1,0,1), prob = c(m/2, 1-m, m/2), replace = TRUE, size = length(patch)) # Individuals migrate 1 patch backwards or forwards (or not at all) according to equation and value of m
-  newPatch[newPatch==-1] <- 0 # Individuals that enter patch -1 are bounced back to patch 0
+# Dispersal
+ranWalk <- function(patch, m, dist){
+  newPatch <- patch+sample(x = seq(from = 0-dist, to = 0+dist, by = 1), prob = c(rep(m/2/dist, dist),1-m,rep(m/2/dist, dist)), replace = TRUE, size = length(patch)) # Individuals migrate dist (or less than dist) patches backwards or forwards (or not at all) according to equation and value of m
+  newPatch[newPatch<0] <- 0 # Individuals that enter patch -1 are bounced back to patch 0
   newPatch
 }
 
@@ -38,7 +38,7 @@ pGrowth <- function(pop){
   off <- rep(1:nrow(pop), realN) # Prepares each individual to be replicated according to its realised reproductive output
   offMat <- pop[off,] # Replicates individuals with inheritance
   offMat <- mutation(offMat) # Mutates offspring with mut.prob probability
-  offMat[,"patch"] <- ranWalk(offMat[,"patch"], m) # Offspring disperse according to probability m
+  offMat[,"patch"] <- ranWalk(offMat[,"patch"], m, dist) # Offspring disperse according to probability m and max dist patches
   offMat[,"n"] <- ave(offMat[,"patch"], offMat[,"patch"], FUN=length) # Calculates local density for each patch
   pop <- offMat # Replaces old population with new population consisting of offspring only (i.e. full adult mortality)
   pop # The population as it now stands
