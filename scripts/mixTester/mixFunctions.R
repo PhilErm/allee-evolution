@@ -3,7 +3,7 @@
 
 # Modified Haond et al. (2018) function for growth subject to an Allee effect
 alleeFunc <- function(u, t, K, r){
-  exp((4*r*(K/(K-t)^2)*u*(1-(u/K))*(u-t))/u)
+  exp(4*r*(K/(K-t)^2)*(1-(u/K))*(u-t))
 }
 
 # Creating a population matrix
