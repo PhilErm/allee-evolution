@@ -662,15 +662,15 @@ simpMerged <- rbindlist(list(simpPushed, simpPP, simpPulled), idcol = "ID")
 
 # Plots
 # Simpson's diversity index in the vanguard over time in invasions subject to evolution
-p1 <- ggplot(simpPP, aes(x = generation, y = flat)) +
-  stat_summary(fun.y = mean, geom = "line") +
-  labs(x = "Generation", y = expression(""~bar(italic(D))[italic(van)]~"")) +
-  theme_classic(base_size = 12) +
-  geom_hline(yintercept = 0, linetype="dotted") +
-  geom_hline(yintercept = 0.8, linetype="dotted") +
-  scale_y_continuous(breaks=c(0.8,0.6,0.4,0.2,0))
-p1
-ggsave(filename = "figures/figMixPP.pdf", p1, width = 20, height = 20, units = "cm")
+# p1 <- ggplot(simpPP, aes(x = generation, y = flat)) +
+#   stat_summary(fun.y = mean, geom = "line") +
+#   labs(x = "Generation", y = expression(""~bar(italic(D))[italic(van)]~"")) +
+#   theme_classic(base_size = 12) +
+#   geom_hline(yintercept = 0, linetype="dotted") +
+#   geom_hline(yintercept = 0.8, linetype="dotted") +
+#   scale_y_continuous(breaks=c(0.8,0.6,0.4,0.2,0))
+# p1
+#ggsave(filename = "figures/figMixPP.pdf", p1, width = 20, height = 20, units = "cm")
 
 # Simpson's diversity index in the vanguard over time
 p1 <- ggplot(simpMerged, aes(x = generation, y = flat, colour = ID)) +
@@ -680,7 +680,7 @@ p1 <- ggplot(simpMerged, aes(x = generation, y = flat, colour = ID)) +
   geom_hline(yintercept = 0, linetype="dotted") +
   geom_hline(yintercept = 0.8, linetype="dotted") +
   scale_y_continuous(breaks=c(0.8,0.6,0.4,0.2,0)) +
-  scale_colour_manual(name = " ", labels = c(expression(~bar(italic(A))[italic(init)]~"= 250"),expression(~bar(italic(A))[italic(init)]~"= 250, "~italic(A)[italic(i)]~"evolution possible"),expression(~bar(italic(A))[italic(init)]~"= -497")), values = c("#619CFF", "black", "#F8766D")) +
+  scale_colour_manual(name = " ", labels = c(expression(~bar(italic(A))[italic(init)]~"= 250, "~italic(A)[italic(i)]~"evolution not possible"),expression(~bar(italic(A))[italic(init)]~"= 250, "~italic(A)[italic(i)]~"evolution possible"),expression(~bar(italic(A))[italic(init)]~"= -497, "~italic(A)[italic(i)]~"evolution not possible")), values = c("#619CFF", "black", "#F8766D")) +
   theme(legend.text=element_text(size=12), legend.title=element_blank(), plot.tag = element_text(size=24)) +
   theme(legend.text.align = 0) +
   theme(legend.position = c(0.7, 0.5))
